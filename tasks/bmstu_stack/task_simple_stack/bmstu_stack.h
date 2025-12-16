@@ -48,6 +48,7 @@ class stack
 			new (&new_data[i]) T(std::move(data_[i]));
 			data_[i].~T();
 		}
+		new (&new_data[size_]) T(std::forward<T>(value));
 		operator delete(data_);
 		data_ = new_data;
 		++size_;
@@ -64,13 +65,47 @@ class stack
 		size_ = 0;
 	}
 
-	void push(const T& value) {}
+	void push(const T& value)
+	{
+		T* new_data = (T*)(operator new(sizeof(T) * size_ + 1));
+		for (size_t i = 0; i < size_; ++i)
+		{
+			new (&new_data[i]) T(std::move(data_[i]));
+			data_[i].~T();
+		}
+		new (&new_data[size_]) T(value);
+		operator delete(data_);
+		data_ = new_data;
+		++size_;
+	}
 
-	void pop() {}
+	void pop()
+	{
+		if (empty())
+		{
+			throw std::underflow_error("stack pustoi");
+		}
+		--size_;
+		data_[size_].~T();
+	}
 
-	T& top() { return data_[0]; }
+	T& top()
+	{
+		if (empty())
+		{
+			throw std::underflow_error("stack pustoi");
+		}
+		return data_[size_ - 1];
+	}
 
-	const T& top() const { return data_[0]; }
+	const T& top() const
+	{
+		if (empty())
+		{
+			throw std::underflow_error("stack pustoi");
+		}
+		return data_[size_ - 1];
+	}
 
    private:
 	T* data_;
