@@ -48,7 +48,7 @@ class stack
 			new (&new_data[i]) T(std::move(data_[i]));
 			data_[i].~T();
 		}
-		new (&new_data[size_]) T(std::forward<T>(value));
+		new (&new_data[size_]) T(std::move(value));
 		operator delete(data_);
 		data_ = new_data;
 		++size_;
