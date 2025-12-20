@@ -33,36 +33,37 @@ class stack
 		other.data_ = nullptr;
 		other.size_ = 0;
 	}
-	stack& operator=(stack& other)
+	stack& operator=(const stack& other)
 	{
-		clear();
-		operator delete(data_);
-		data_ = (T*)(operator new(sizeof(T) * size_));
-		size_ = other.size_;
-		for (size_t i = 0; i < size_; ++i)
+		if (this != &other)
 		{
-			new (data_ + i) T(other.data_[i]);
+			clear();
+			size_ = other.size_;
+
+			data_ = (T*)(operator new(sizeof(T) * size_));
+			for (size_t i = 0; i < size_; ++i)
+			{
+				new (data_ + i) T(other.data_[i]);
+			}
+			// perem kop
 		}
-		return *this;  // perem kop
+		return *this;
 	}
+
 	stack& operator=(stack&& other)
 	{
-		clear();
-		operator delete(data_);
-		data_ = other.data_;
-		size_ = other.size_;
-		other.data_ = nullptr;
-		other.size_ = 0;
-		return *this;
-	}  // kop prisv
-
-	~stack()
-	{
-		if (data_ != nullptr)
+		if (this != &other)
 		{
-			operator delete(data_);
+			clear();
+			data_ = other.data_;
+			size_ = other.size_;
+			other.data_ = nullptr;
+			other.size_ = 0;
 		}
+		return *this;
 	}
+
+	~stack() { clear(); }
 
 	T* data() const { return data_; }
 	template <typename... Args>
@@ -82,7 +83,7 @@ class stack
 
 	void push(T&& value)
 	{
-		T* new_data = (T*)(operator new(sizeof(T) * size_ + 1));
+		T* new_data = (T*)(operator new(sizeof(T) * (size_ + 1)));
 
 		for (size_t i = 0; i < size_; ++i)
 		{
@@ -108,7 +109,7 @@ class stack
 
 	void push(const T& value)
 	{
-		T* new_data = (T*)(operator new(sizeof(T) * size_ + 1));
+		T* new_data = (T*)(operator new(sizeof(T) * (size_ + 1)));
 		for (size_t i = 0; i < size_; ++i)
 		{
 			new (&new_data[i]) T(std::move(data_[i]));

@@ -388,3 +388,14 @@ TEST(StackTest, CopyAssigment)
 	ASSERT_EQ(s1.size(), 5u);
 	ASSERT_EQ(s1.top(), 100);
 }
+TEST(StackTest, SelfAssignment)
+{
+	bmstu::stack<int> s;
+	s.push(1);
+	s.push(2);
+
+	s = s;
+
+	ASSERT_EQ(s.size(), 2u);
+	ASSERT_EQ(s.top(), 2);
+}
