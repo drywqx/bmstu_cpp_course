@@ -151,20 +151,23 @@ class simple_basic_string
 	template <typename S>
 	friend S& operator>>(S& is, simple_basic_string& obj)
 	{
-		template <typename S>
-		friend S& operator>>(S& is, simple_basic_string& obj)
+		T ch;
+		size_t i = 0;
+		T* new_ptr = new T[100];
+
+		while (is.get(ch))
 		{
-			obj.ptr_ = new T[16];
-			size_t len = 0;
-			T symbol;
-			while (is.get(symbol))
-			{
-				obj.ptr_[len++] = symbol;
-			}
-			obj.ptr_[len] = T(0);
-			obj.size_ = len;
-			return is;
+			new_ptr[i++] = ch;
 		}
+		new_ptr[i] = T(0);
+
+		delete[] obj.ptr_;
+		obj.ptr_ = new_ptr;
+		obj.size_ = i;
+
+		is.putback(ch);
+
+		return is;
 	}
 
 	simple_basic_string& operator+=(const simple_basic_string& other)
