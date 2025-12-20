@@ -151,8 +151,20 @@ class simple_basic_string
 	template <typename S>
 	friend S& operator>>(S& is, simple_basic_string& obj)
 	{
-		
-		return is;
+		template <typename S>
+		friend S& operator>>(S& is, simple_basic_string& obj)
+		{
+			obj.ptr_ = new T[16];
+			size_t len = 0;
+			T symbol;
+			while (is.get(symbol))
+			{
+				obj.ptr_[len++] = symbol;
+			}
+			obj.ptr_[len] = T(0);
+			obj.size_ = len;
+			return is;
+		}
 	}
 
 	simple_basic_string& operator+=(const simple_basic_string& other)

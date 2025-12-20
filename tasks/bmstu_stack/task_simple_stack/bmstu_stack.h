@@ -16,6 +16,46 @@ class stack
 
 	size_t size() const noexcept { return size_; }
 
+	stack(const stack& other) : data_(nullptr), size_(0u)  // konstr kop
+	{
+		size_ = other.size_;
+
+		data_ = (T*)(operator new(sizeof(T) * other.size_));
+		for (size_t i = 0; i < size_; ++i)
+		{
+			new (data_ + i) T(other.data_[i]);
+		}
+	}
+	stack(stack&& other) : data_(nullptr), size_(0u)  // konst perem
+	{
+		data_ = other.data_;
+		size_ = other.size_;
+		other.data_ = nullptr;
+		other.size_ = 0;
+	}
+	stack& operator=(stack& other)
+	{
+		clear();
+		operator delete(data_);
+		data_ = (T*)(operator new(sizeof(T) * size_));
+		size_ = other.size_;
+		for (size_t i = 0; i < size_; ++i)
+		{
+			new (data_ + i) T(other.data_[i]);
+		}
+		return *this;  // perem kop
+	}
+	stack& operator=(stack&& other)
+	{
+		clear();
+		operator delete(data_);
+		data_ = other.data_;
+		size_ = other.size_;
+		other.data_ = nullptr;
+		other.size_ = 0;
+		return *this;
+	}  // kop prisv
+
 	~stack()
 	{
 		if (data_ != nullptr)
@@ -24,6 +64,7 @@ class stack
 		}
 	}
 
+	T* data() const { return data_; }
 	template <typename... Args>
 	void emplace(Args&&... args)
 	{
