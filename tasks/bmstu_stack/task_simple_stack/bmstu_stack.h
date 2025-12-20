@@ -16,14 +16,56 @@ class stack
 
 	size_t size() const noexcept { return size_; }
 
-	~stack()
+	stack(const stack& other) : data_(nullptr), size_(0u)  // konstr kop
 	{
-		if (data_ != nullptr)
+		size_ = other.size_;
+
+		data_ = (T*)(operator new(sizeof(T) * other.size_));
+		for (size_t i = 0; i < size_; ++i)
 		{
-			operator delete(data_);
+			new (data_ + i) T(other.data_[i]);
 		}
 	}
+	stack(stack&& other) : data_(nullptr), size_(0u)  // konst perem
+	{
+		data_ = other.data_;
+		size_ = other.size_;
+		other.data_ = nullptr;
+		other.size_ = 0;
+	}
+	stack& operator=(const stack& other)
+	{
+		if (this != &other)
+		{
+			clear();
+			size_ = other.size_;
 
+			data_ = (T*)(operator new(sizeof(T) * size_));
+			for (size_t i = 0; i < size_; ++i)
+			{
+				new (data_ + i) T(other.data_[i]);
+			}
+			// perem kop
+		}
+		return *this;
+	}
+
+	stack& operator=(stack&& other)
+	{
+		if (this != &other)
+		{
+			clear();
+			data_ = other.data_;
+			size_ = other.size_;
+			other.data_ = nullptr;
+			other.size_ = 0;
+		}
+		return *this;
+	}
+
+	~stack() { clear(); }
+
+	T* data() const { return data_; }
 	template <typename... Args>
 	void emplace(Args&&... args)
 	{
@@ -41,14 +83,14 @@ class stack
 
 	void push(T&& value)
 	{
-		T* new_data = (T*)(operator new(sizeof(T) * size_ + 1));
+		T* new_data = (T*)(operator new(sizeof(T) * (size_ + 1)));
 
 		for (size_t i = 0; i < size_; ++i)
 		{
 			new (&new_data[i]) T(std::move(data_[i]));
 			data_[i].~T();
 		}
-		new (&new_data[size_]) T(std::forward<T>(value));
+		new (&new_data[size_]) T(std::move(value));
 		operator delete(data_);
 		data_ = new_data;
 		++size_;
@@ -67,7 +109,7 @@ class stack
 
 	void push(const T& value)
 	{
-		T* new_data = (T*)(operator new(sizeof(T) * size_ + 1));
+		T* new_data = (T*)(operator new(sizeof(T) * (size_ + 1)));
 		for (size_t i = 0; i < size_; ++i)
 		{
 			new (&new_data[i]) T(std::move(data_[i]));
