@@ -332,11 +332,15 @@ class basic_string
 	template <typename S>
 	friend S& operator>>(S& is, basic_string& obj)
 	{
-		T buffer[1024];
-		if (is >> buffer)
+		T ch;
+		basic_string temp;
+
+		while (is.get(ch))
 		{
-			obj = buffer;
+			temp += ch;
 		}
+
+		obj = std::move(temp);
 		return is;
 	}
 
