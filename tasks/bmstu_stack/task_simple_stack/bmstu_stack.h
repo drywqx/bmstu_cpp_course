@@ -33,7 +33,7 @@ class stack
 		other.data_ = nullptr;
 		other.size_ = 0;
 	}
-	stack& operator=(const stack& other)
+	stack& operator=(const stack& other) //prisv kopir
 	{
 		if (this != &other)
 		{
@@ -50,7 +50,7 @@ class stack
 		return *this;
 	}
 
-	stack& operator=(stack&& other)
+	stack& operator=(stack&& other)//prisv perem
 	{
 		if (this != &other)
 		{
