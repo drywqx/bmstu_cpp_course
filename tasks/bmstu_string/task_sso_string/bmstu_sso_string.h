@@ -182,7 +182,7 @@ class basic_string
 		}
 	}
 
-	basic_string(const basic_string& other)
+	basic_string(const basic_string& other)	 // kopirov
 	{
 		is_long_ = other.is_long_;
 		if (is_long())
@@ -202,7 +202,7 @@ class basic_string
 		}
 	}
 
-	basic_string(basic_string&& dying) noexcept
+	basic_string(basic_string&& dying) noexcept	 // perem
 	{
 		is_long_ = dying.is_long_;
 		if (is_long())
@@ -230,7 +230,7 @@ class basic_string
 
 	size_t capacity() const { return get_capacity(); }
 
-	basic_string& operator=(basic_string&& other) noexcept
+	basic_string& operator=(basic_string&& other) noexcept	// perem prisv
 	{
 		if (this != &other)
 		{
@@ -257,11 +257,6 @@ class basic_string
 	basic_string& operator=(const T* c_str)
 	{
 		size_t len = strlen_(c_str);
-		if (is_long() && data_.long_str.ptr)
-		{
-			delete[] data_.long_str.ptr;
-		}
-
 		if (len <= SSO_CAPACITY)
 		{
 			is_long_ = false;
@@ -286,7 +281,7 @@ class basic_string
 		return *this;
 	}
 
-	basic_string& operator=(const basic_string& other)
+	basic_string& operator=(const basic_string& other)	// kop prisv
 	{
 		if (this != &other)
 		{
