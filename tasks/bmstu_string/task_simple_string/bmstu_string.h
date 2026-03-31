@@ -73,9 +73,9 @@ class simple_basic_string
 
 		ptr_ = other.ptr_;
 		size_ = other.size_;
+		other.ptr_ = new T[1];
 
 		other.size_ = 0;
-		other.ptr_ = new T[1];
 		other.ptr_[0] = T(0);
 	}
 

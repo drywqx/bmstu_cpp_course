@@ -399,3 +399,21 @@ TEST(StackTest, SelfAssignment)
 	ASSERT_EQ(s.size(), 2u);
 	ASSERT_EQ(s.top(), 2);
 }
+TEST(StackTest, MoveAssigment2)
+{
+	bmstu::stack<int> s;
+	s.push(1);
+	s.push(666);
+	s.push(667);
+
+	bmstu::stack<int> s2;
+	s2.push(2);
+	s2.push(100500);
+
+	s2 = std::move(s);
+	ASSERT_EQ(s.size(), 0u);
+	ASSERT_EQ(s2.size(), 3);
+	ASSERT_EQ(s.top(), 667);
+	ASSERT_EQ(s2.size(), 3);
+	ASSERT_EQ(s.data(), nullptr);
+}

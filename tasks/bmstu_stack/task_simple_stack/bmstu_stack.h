@@ -16,7 +16,7 @@ class stack
 
 	size_t size() const noexcept { return size_; }
 
-	stack(const stack& other) : data_(nullptr), size_(0u)  // konstr kop
+	stack(const stack& other) : data_(nullptr), size_(0u) 
 	{
 		size_ = other.size_;
 
@@ -26,7 +26,7 @@ class stack
 			new (data_ + i) T(other.data_[i]);
 		}
 	}
-	stack(stack&& other) : data_(nullptr), size_(0u)  // konst perem
+	stack(stack&& other) : data_(nullptr), size_(0u)
 	{
 		data_ = other.data_;
 		size_ = other.size_;
@@ -50,7 +50,7 @@ class stack
 		return *this;
 	}
 
-	stack& operator=(stack&& other)
+	stack& operator=(stack&& other)	 
 	{
 		if (this != &other)
 		{
