@@ -1,9 +1,8 @@
 #pragma once
-
+#include <iterator>
 #include <cstring>
 #include <exception>
 #include <iostream>
-
 namespace bmstu
 {
 template <typename T>
@@ -14,9 +13,77 @@ using wstring = basic_string<wchar_t>;
 using u16string = basic_string<char16_t>;
 using u32string = basic_string<char32_t>;
 
+
+template <typename Z>
+struct Identity
+{
+  using element_type = Z;
+};
+
+template <typename Derived,
+      typename Type,
+      typename Tag,
+      template <typename> class Wrapper = Identity>
+struct abstract_iterator
+{
+  using iterator_category = Tag;
+  using value_type = Type;
+  using pointer = Type*;
+  using reference = Type&;
+  using difference_type = std::ptrdiff_t;
+  using element_type = typename Wrapper<Type>::element_type;
+
+  virtual ~abstract_iterator() = default;
+
+  virtual reference operator*() const = 0;
+  virtual Derived& operator++() = 0;
+  virtual Derived operator++(int) = 0;
+  virtual bool operator==(const Derived& other) const = 0;
+  virtual bool operator!=(const Derived& other) const = 0;
+
+};
+
+
 template <typename T>
 class basic_string
 {
+  class iterator
+    : public abstract_iterator<iterator, T, std::random_access_iterator_tag>
+  {
+     public:
+    explicit iterator(T* ptr) : ptr_(ptr) {}
+
+    T& operator*() const override { return *ptr_; }
+
+    iterator& operator++() override
+    {
+      ++ptr_;
+      return *this;
+    }
+
+    iterator operator++(int) override
+    {
+      iterator tmp = *this;
+      ++ptr_;
+      return tmp;
+    }
+
+    bool operator==(const iterator& other) const override
+    {
+      return ptr_ == other.ptr_;
+    }
+
+    bool operator!=(const iterator& other) const override
+    {
+      return ptr_ != other.ptr_;
+    }
+     private:
+    T* ptr_;
+  };
+
+
+
+
    private:
 	static constexpr size_t SSO_CAPACITY =
 		(sizeof(T*) + sizeof(size_t) + sizeof(size_t)) / sizeof(T) - 1;
@@ -27,6 +94,15 @@ class basic_string
 		size_t size;
 		size_t capacity;
 	};
+	
+
+
+
+
+
+
+
+
 
 	struct ShortString
 	{
@@ -92,11 +168,9 @@ class basic_string
 			return SSO_CAPACITY;
 		}
 	}
-
-   public:
 	basic_string()
 	{
-		is_long_ = false;
+		is_long_ = false; 
 		data_.short_str.size = 0;
 		data_.short_str.buffer[0] = '\0';
 	}
