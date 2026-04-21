@@ -17,6 +17,8 @@ foreach (TASK ${TASKS})
 endforeach ()
 message(STATUS "SOURCES: ${SOURCES}")
 add_executable(${NAME_EXECUTABLE} ${SOURCES})
+target_include_directories(${NAME_EXECUTABLE} PUBLIC ${PROJECT_SOURCE_DIR}/tasks/bmstu_abstract_iterator/task_abstract_iterator)
+
 target_link_libraries(
         ${NAME_EXECUTABLE}
         GTest::gtest_main

@@ -376,3 +376,4 @@ TEST(SSOStringTest, SSOCapacity)
 	ASSERT_FALSE(long_str.is_using_sso());
 	ASSERT_GE(long_str.capacity(), long_str.size());
 }
+
